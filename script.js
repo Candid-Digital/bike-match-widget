@@ -10,17 +10,17 @@ document.getElementById("openQuiz").onclick = () => {
 document.getElementById("closeQuiz").onclick = () => {
   document.getElementById("quizModal").classList.add("hidden");
   currentQuestion = 0;
-  answers = {};
+  Object.keys(answers).forEach(k => delete answers[k]);
 };
 
 const quizContainer = document.getElementById("quizContainer");
 
 const questions = [
-  { key: "use_case", text: "What will you mainly use the bike for?", options: ["commuting", "trail", "leisure"] },
+  { key: "use_case", text: "How will you mainly use your e-bike?", options: ["commuting", "trail", "leisure", "hybrid"] },
   { key: "terrain", text: "What kind of terrain will you ride on?", options: ["flat", "hilly", "mixed"] },
-  { key: "support", text: "How much motor support do you want?", options: ["low-support", "mid-support", "high-support"] },
-  { key: "range", text: "How far do you typically ride on a single trip?", options: ["short-distance", "medium-distance", "long-distance"] },
-  { key: "budget", text: "What’s your budget?", options: ["budget", "mid-range", "premium"] }
+  { key: "range", text: "How far do you need it to go on a single charge?", options: ["short", "medium", "long"] },
+  { key: "equipped", text: "Do you want your bike to be fully equipped (racks, lights etc)?", options: ["yes", "no", "unsure"] },
+  { key: "budget", text: "What’s your maximum budget?", options: ["\u00a31,000", "\u00a31,500", "\u00a32,000", "\u00a33,000+"] }
 ];
 
 function loadQuestion() {
@@ -52,15 +52,26 @@ function showResults() {
   fetch("bikes.json")
     .then(res => res.json())
     .then(data => {
+      const budgetMap = {
+        "£1,000": 1000,
+        "£1,500": 1500,
+        "£2,000": 2000,
+        "£3,000+": 100000
+      };
+
+      const userBudget = budgetMap[answers.budget];
+
       const scored = data.map(bike => {
         let score = 0;
         let mismatches = [];
 
-        if (bike.tags.includes(answers.use_case)) score++; else mismatches.push("use case");
-        if (bike.tags.includes(answers.terrain)) score++; else mismatches.push("terrain");
-        if (bike.tags.includes(answers.support)) score++; else mismatches.push("support level");
-        if (bike.tags.includes(answers.range)) score++; else mismatches.push("range");
-        if (bike.tags.includes(answers.budget)) score++; else mismatches.push("budget");
+        if (bike.use_case === answers.use_case) score++; else mismatches.push("use case");
+        if (bike.terrain === answers.terrain) score++; else mismatches.push("terrain");
+        if (bike.range === answers.range) score++; else mismatches.push("range");
+        if (bike.equipped === answers.equipped) score++; else mismatches.push("equipment");
+
+        const bikePrice = parseFloat(bike.price.replace(" GBP", "").replace(",", ""));
+        if (!isNaN(bikePrice) && bikePrice <= userBudget) score++; else mismatches.push("budget");
 
         return { ...bike, score, mismatches };
       });
@@ -78,6 +89,7 @@ function showResults() {
               <h3 class="font-bold">${bike.name}</h3>
               <p class="text-sm text-gray-600">Matched ${bike.score}/5 criteria</p>
               ${bike.mismatches.length ? `<p class="text-xs text-red-500">Not a perfect match on: ${bike.mismatches.join(", ")}</p>` : ""}
+              <a href="${bike.product_url}" class="text-blue-600 underline text-sm" target="_blank">View Bike</a>
             </div>
           `).join("") : `<p>No perfect matches found, but we’ll be adding more bikes soon!</p>`}
         </div>
