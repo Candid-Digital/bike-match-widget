@@ -79,17 +79,10 @@ function showResults() {
         return { ...bike, score, mismatches };
       });
 
-      let topMatches = scored
-        .filter(b => b.score === 5 && b.availability === "in stock")
+      const topMatches = scored
+        .filter(b => b.availability === "in stock")
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
-
-      if (topMatches.length === 0) {
-        topMatches = scored
-          .filter(b => b.score === 4 && b.availability === "in stock")
-          .sort((a, b) => b.score - a.score)
-          .slice(0, 5);
-      }
 
       quizContainer.innerHTML = `
         <h2 class="text-xl font-semibold mb-4">Your Bike Matches</h2>
@@ -105,7 +98,7 @@ function showResults() {
                 <a href="${bike.product_url}" class="text-blue-600 underline text-sm" target="_blank">View Bike</a>
               </div>
             </div>
-          `).join("") : `<p>No perfect matches found based on your selections. Try adjusting your answers or check back soon for more bikes!</p>`}
+          `).join("") : `<p>No matches found based on your selections. Try adjusting your answers or check back soon for more bikes!</p>`}
         </div>
         <div class="mt-6 text-center">
           <button id="restartQuiz" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Start Over</button>
