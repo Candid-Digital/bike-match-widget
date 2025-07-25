@@ -88,11 +88,15 @@ function showResults() {
         <h2 class="text-xl font-semibold mb-4">Your Bike Matches</h2>
         <div class="space-y-4">
           ${topMatches.length ? topMatches.map(bike => `
-            <div class="border p-4 rounded shadow">
-              <h3 class="font-bold">${bike.name}</h3>
-              <p class="text-sm text-gray-600">Matched ${bike.score}/5 criteria</p>
-              ${bike.mismatches.length ? `<p class="text-xs text-red-500">Not a perfect match on: ${bike.mismatches.join(", ")}</p>` : ""}
-              <a href="${bike.product_url}" class="text-blue-600 underline text-sm" target="_blank">View Bike</a>
+            <div class="border p-4 rounded shadow flex gap-4 items-start">
+              ${bike.image_link ? `<img src="${bike.image_link}" alt="${bike.name}" class="w-24 h-24 object-cover rounded">` : ""}
+              <div>
+                <h3 class="font-bold text-lg">${bike.name}</h3>
+                ${bike.price ? `<p class="text-sm text-gray-800 font-medium">${bike.price}</p>` : ""}
+                <p class="text-sm text-gray-600">Matched ${bike.score}/5 criteria</p>
+                ${bike.mismatches.length ? `<p class="text-xs text-red-500">Not a perfect match on: ${bike.mismatches.join(", ")}</p>` : ""}
+                <a href="${bike.product_url}" class="text-blue-600 underline text-sm" target="_blank">View Bike</a>
+              </div>
             </div>
           `).join("") : `<p>No perfect matches found based on your selections. Try adjusting your answers or check back soon for more bikes!</p>`}
         </div>
