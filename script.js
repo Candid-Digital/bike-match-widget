@@ -34,7 +34,7 @@ function loadQuestion() {
     <div class="mb-4">
       <h2 class="text-xl font-semibold mb-2">${q.text}</h2>
       <div class="space-y-2">
-        ${q.options.map(opt => `<button class="answerBtn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded" data-key="${q.key}" data-value="${opt}">${opt}</button>`).join("")}
+        ${q.options.map(opt => `<button class="answerBtn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded transition" data-key="${q.key}" data-value="${opt}">${opt}</button>`).join("")}
       </div>
     </div>
   `;
@@ -49,6 +49,8 @@ function loadQuestion() {
 }
 
 function showResults() {
+  quizContainer.innerHTML = `<div class='text-center py-10'><span class='text-lg font-medium'>Finding your perfect bike...</span><div class='mt-4 animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mx-auto'></div></div>`;
+
   fetch("bikes.json")
     .then(res => res.json())
     .then(data => {
@@ -60,8 +62,6 @@ function showResults() {
       };
 
       const userBudget = budgetMap[answers.budget];
-      console.log("User selected budget:", answers.budget);
-      console.log("Parsed user budget max:", userBudget);
 
       const scored = data.map(bike => {
         let score = 0;
@@ -80,7 +80,7 @@ function showResults() {
       });
 
       const topMatches = scored
-        .filter(b => b.score >= 4)
+        .filter(b => b.score >= 4 && b.availability === "in stock")
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
 
@@ -88,7 +88,7 @@ function showResults() {
         <h2 class="text-xl font-semibold mb-4">Your Bike Matches</h2>
         <div class="space-y-4">
           ${topMatches.length ? topMatches.map(bike => `
-            <div class="border p-4 rounded shadow flex gap-4 items-start">
+            <div class="border p-4 rounded shadow flex gap-4 items-start hover:shadow-md transition">
               ${bike.image_link ? `<img src="${bike.image_link}" alt="${bike.name}" class="w-24 h-24 object-cover rounded">` : ""}
               <div>
                 <h3 class="font-bold text-lg">${bike.name}</h3>
@@ -100,7 +100,16 @@ function showResults() {
             </div>
           `).join("") : `<p>No perfect matches found based on your selections. Try adjusting your answers or check back soon for more bikes!</p>`}
         </div>
+        <div class="mt-6 text-center">
+          <button id="restartQuiz" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">Start Over</button>
+        </div>
       `;
+
+      document.getElementById("restartQuiz").onclick = () => {
+        currentQuestion = 0;
+        Object.keys(answers).forEach(k => delete answers[k]);
+        loadQuestion();
+      };
     })
     .catch(err => {
       console.error("Failed to fetch or process bikes.json:", err);
