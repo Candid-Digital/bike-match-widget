@@ -80,7 +80,7 @@ function showResults() {
       });
 
       const topMatches = scored
-        .filter(b => b.availability === "in stock")
+        .filter(b => b.available === "in stock")
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
 
