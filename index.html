@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bike Match Widget</title>
+  <script src="script.js" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans">
+
+  <div class="fixed bottom-4 right-4">
+    <button id="openQuiz" class="bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-700">
+      Find Your Perfect E-Bike
+    </button>
+  </div>
+
+  <div id="quizModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg relative">
+      <button id="closeQuiz" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">✕</button>
+      <div id="quizContainer"></div>
+    </div>
+  </div>
+
+</body>
+</html>
