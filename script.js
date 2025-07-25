@@ -79,10 +79,17 @@ function showResults() {
         return { ...bike, score, mismatches };
       });
 
-      const topMatches = scored
-        .filter(b => b.score >= 4 && b.availability === "in stock")
+      let topMatches = scored
+        .filter(b => b.score === 5 && b.availability === "in stock")
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
+
+      if (topMatches.length === 0) {
+        topMatches = scored
+          .filter(b => b.score === 4 && b.availability === "in stock")
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 5);
+      }
 
       quizContainer.innerHTML = `
         <h2 class="text-xl font-semibold mb-4">Your Bike Matches</h2>
