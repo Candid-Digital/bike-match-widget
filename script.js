@@ -60,6 +60,8 @@ function showResults() {
       };
 
       const userBudget = budgetMap[answers.budget];
+      console.log("User selected budget:", answers.budget);
+      console.log("Parsed user budget max:", userBudget);
 
       const scored = data.map(bike => {
         let score = 0;
@@ -70,7 +72,8 @@ function showResults() {
         if (bike.range === answers.range) score++; else mismatches.push("range");
         if (bike.equipped === answers.equipped) score++; else mismatches.push("equipment");
 
-        const bikePrice = parseFloat(bike.price.replace(" GBP", "").replace(",", ""));
+        const cleanedPrice = typeof bike.price === "string" ? bike.price.replace(/[\u00a3,]/g, "").replace(" GBP", "").trim() : "0";
+        const bikePrice = parseFloat(cleanedPrice);
         if (!isNaN(bikePrice) && bikePrice <= userBudget) score++; else mismatches.push("budget");
 
         return { ...bike, score, mismatches };
@@ -91,8 +94,12 @@ function showResults() {
               ${bike.mismatches.length ? `<p class="text-xs text-red-500">Not a perfect match on: ${bike.mismatches.join(", ")}</p>` : ""}
               <a href="${bike.product_url}" class="text-blue-600 underline text-sm" target="_blank">View Bike</a>
             </div>
-          `).join("") : `<p>No perfect matches found, but we’ll be adding more bikes soon!</p>`}
+          `).join("") : `<p>No perfect matches found based on your selections. Try adjusting your answers or check back soon for more bikes!</p>`}
         </div>
       `;
+    })
+    .catch(err => {
+      console.error("Failed to fetch or process bikes.json:", err);
+      quizContainer.innerHTML = `<p class='text-red-600'>Sorry, something went wrong loading the results. Please try again later.</p>`;
     });
 }
