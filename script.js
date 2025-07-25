@@ -89,7 +89,7 @@ function showResults() {
         <div class="space-y-4">
           ${topMatches.length ? topMatches.map(bike => `
             <div class="border p-4 rounded shadow flex gap-4 items-start hover:shadow-md transition">
-              ${bike.image_url ? `<img src="${bike.image_url}" alt="${bike.name}" class="w-24 h-24 object-cover rounded">` : ""}
+             ${bike.image_url ? `<img src="${bike.image_url.replace(/([^:]\/)\/+/g, "$1")}" alt="${bike.name}" class="w-24 h-24 object-cover rounded">` : ""}
               <div>
                 <h3 class="font-bold text-lg">${bike.name}</h3>
                 ${bike.price ? `<p class="text-sm text-gray-800 font-medium">${bike.price}</p>` : ""}
