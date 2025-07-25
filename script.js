@@ -20,7 +20,7 @@ const questions = [
   { key: "terrain", text: "What kind of terrain will you ride on?", options: ["flat", "hilly", "mixed"] },
   { key: "range", text: "How far do you need it to go on a single charge?", options: ["short", "medium", "long"] },
   { key: "equipped", text: "Do you want your bike to be fully equipped (racks, lights etc)?", options: ["yes", "no", "unsure"] },
-  { key: "budget", text: "What’s your maximum budget?", options: ["\u00a31,000", "\u00a31,500", "\u00a32,000", "\u00a33,000+"] }
+  { key: "budget", text: "What’s your maximum budget?", options: ["£1,000", "£1,500", "£2,000", "£3,000+"] }
 ];
 
 function loadQuestion() {
@@ -89,7 +89,6 @@ function showResults() {
         <div class="space-y-4">
           ${topMatches.length ? topMatches.map(bike => `
             <div class="border p-4 rounded shadow flex gap-4 items-start hover:shadow-md transition">
-             ${bike.image_url ? `<img src="${bike.image_url.replace(/([^:]\/)\/+/g, "$1")}" alt="${bike.name}" class="w-24 h-24 object-cover rounded">` : ""}
               <div>
                 <h3 class="font-bold text-lg">${bike.name}</h3>
                 ${bike.price ? `<p class="text-sm text-gray-800 font-medium">${bike.price}</p>` : ""}
