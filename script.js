@@ -95,7 +95,11 @@ function showResults() {
           ${topMatches.length ? topMatches.map(bike => `
             <div class="border p-4 rounded shadow flex gap-4 items-start hover:shadow-md transition">
               <div>
-                <h3 class="font-bold text-lg">${bike.name}</h3>
+                <h3 class="font-bold text-lg flex items-center gap-2">
+  ${bike.name}
+  ${bike.available?.toLowerCase() === "preorder" ? `<span class="text-xs bg-yellow-300 text-yellow-900 px-2 py-1 rounded">Pre-Order</span>` : ""}
+</h3>
+
                 <p class="text-sm text-gray-800 font-medium">
                   ${bike.sale_price || bike.rrp || bike.price || "Price not available"}
                 </p>
