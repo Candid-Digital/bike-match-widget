@@ -72,15 +72,17 @@ function showResults() {
         if (bike.range === answers.range) score++; else mismatches.push("range");
         if (bike.equipped === answers.equipped) score++; else mismatches.push("equipment");
 
-        const cleanedPrice = typeof bike.price === "string" ? bike.price.replace(/[\u00a3,]/g, "").replace(" GBP", "").trim() : "0";
+        const priceString = bike.sale_price || bike.rrp || "0";
+        const cleanedPrice = priceString.replace(/[\u00a3,]/g, "").replace(" GBP", "").trim();
         const bikePrice = parseFloat(cleanedPrice);
+
         if (!isNaN(bikePrice) && bikePrice <= userBudget) score++; else mismatches.push("budget");
 
-        return { ...bike, score, mismatches };
+        return { ...bike, score, mismatches, displayPrice: priceString };
       });
 
       const topMatches = scored
-        .filter(b => b.available === "in stock")
+        .filter(b => b.available?.toLowerCase() === "in stock")
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
 
@@ -91,7 +93,7 @@ function showResults() {
             <div class="border p-4 rounded shadow flex gap-4 items-start hover:shadow-md transition">
               <div>
                 <h3 class="font-bold text-lg">${bike.name}</h3>
-                ${bike.price ? `<p class="text-sm text-gray-800 font-medium">${bike.price}</p>` : ""}
+                ${bike.displayPrice ? `<p class="text-sm text-gray-800 font-medium">${bike.displayPrice}</p>` : ""}
                 <p class="text-sm text-gray-600">Matched ${bike.score}/5 criteria</p>
                 ${bike.mismatches.length ? `<p class="text-xs text-red-500">Not a perfect match on: ${bike.mismatches.join(", ")}</p>` : ""}
                 <a href="${bike.product_url}" class="text-blue-600 underline text-sm" target="_blank">View Bike</a>
