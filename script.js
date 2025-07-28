@@ -54,6 +54,8 @@ function showResults() {
   fetch("bikes.json")
     .then(res => res.json())
     .then(data => {
+      console.log("✅ Loaded bike data:", data);
+
       const budgetMap = {
         "£1,000": 1000,
         "£1,500": 1500,
@@ -72,17 +74,18 @@ function showResults() {
         if (bike.range === answers.range) score++; else mismatches.push("range");
         if (bike.equipped === answers.equipped) score++; else mismatches.push("equipment");
 
-        const priceString = bike.sale_price || bike.rrp || "0";
-        const cleanedPrice = priceString.replace(/[\u00a3,]/g, "").replace(" GBP", "").trim();
+        const rawPrice = bike.sale_price || bike.rrp || bike.price || "0";
+        const cleanedPrice = typeof rawPrice === "string"
+          ? rawPrice.replace(/[\u00a3,]/g, "").replace(" GBP", "").trim()
+          : "0";
         const bikePrice = parseFloat(cleanedPrice);
-
         if (!isNaN(bikePrice) && bikePrice <= userBudget) score++; else mismatches.push("budget");
 
-        return { ...bike, score, mismatches, displayPrice: priceString };
+        return { ...bike, score, mismatches };
       });
 
       const topMatches = scored
-        .filter(b => b.available?.toLowerCase() === "in stock")
+        .filter(b => b.available === "in stock")
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
 
@@ -93,7 +96,9 @@ function showResults() {
             <div class="border p-4 rounded shadow flex gap-4 items-start hover:shadow-md transition">
               <div>
                 <h3 class="font-bold text-lg">${bike.name}</h3>
-                ${bike.displayPrice ? `<p class="text-sm text-gray-800 font-medium">${bike.displayPrice}</p>` : ""}
+                <p class="text-sm text-gray-800 font-medium">
+                  ${bike.sale_price || bike.rrp || bike.price || "Price not available"}
+                </p>
                 <p class="text-sm text-gray-600">Matched ${bike.score}/5 criteria</p>
                 ${bike.mismatches.length ? `<p class="text-xs text-red-500">Not a perfect match on: ${bike.mismatches.join(", ")}</p>` : ""}
                 <a href="${bike.product_url}" class="text-blue-600 underline text-sm" target="_blank">View Bike</a>
@@ -113,7 +118,7 @@ function showResults() {
       };
     })
     .catch(err => {
-      console.error("Failed to fetch or process bikes.json:", err);
+      console.error("❌ Failed to fetch or process bikes.json:", err);
       quizContainer.innerHTML = `<p class='text-red-600'>Sorry, something went wrong loading the results. Please try again later.</p>`;
     });
 }
