@@ -1,0 +1,14 @@
+{
+  "name": "bike-match-widget",
+  "version": "1.0.0",
+  "description": "Static bike quiz widget powered by dynamic Google Sheet data",
+  "scripts": {
+    "generate:bikes": "node generate_bikes_json.js",
+    "build": "npm run generate:bikes"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "csv-parse": "^5.5.0",
+    "dotenv": "^16.4.5"
+  }
+}
